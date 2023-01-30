@@ -12,8 +12,8 @@ app.use(express.json())
 
 app.use('/users',authRouter)
 app.use('/posts',postRouter)
-app.use('*',()=>{
-    resizeBy.send({
+app.use('*',(req,res)=>{
+    res.send({
         "/posts":"First login and get your all posts using this route"
     })
 })
