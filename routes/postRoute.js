@@ -4,7 +4,7 @@ const postRouter=express.Router()
 
 const authMiddleware=require('../middlewares/auth.middleware')
 
-postRouter.get('/:userId',authMiddleware,getPostsByUserID)
+postRouter.get('/',authMiddleware,getPostsByUserID)
 postRouter.post('/create',authMiddleware,createPost)
 postRouter.patch('/update/:postId',authMiddleware,updatePost)
 postRouter.delete('/delete/:postId',authMiddleware,deletePost)

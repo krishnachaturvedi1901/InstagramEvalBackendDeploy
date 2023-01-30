@@ -2,22 +2,17 @@ const jwt=require('jsonwebtoken')
 const config=require('../config/config')
 const { UserModel } = require('../models/userModel')
 const jwt_secret=config.jwt_secret
-
 async function authMiddleware(req,res,next){
-    const authorization=req.headers['Authorization']
+    const authorization=req.headers['authorization']
     if(authorization){
         const token=authorization.split(' ').pop()
         if(token){
            try {
              jwt.verify(token,jwt_secret)
-             let user=jwt.decode(token)
-             console.log("user after token decode",user)
+             let user=await jwt.decode(token)
              user=await UserModel.findById(user._id)
-             console.log("user after findById in auth middleware before toJson()-",user)
-             user=user.toJson()
+            //  user=user.toJson()
              delete user.password
-             console.log("user after deleting password in auth middleware after toJson()-",user)
-
              req.user=user
              next()
            } catch (error) {

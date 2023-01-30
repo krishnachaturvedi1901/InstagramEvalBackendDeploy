@@ -1,9 +1,11 @@
 const jwt=require('jsonwebtoken')
-// const brcypt=require('bcrypt')
 const config = require('../config/config')
 const { UserModel } = require('../models/userModel')
 const jwt_secret=config.jwt_secret
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const salt = bcrypt.genSaltSync(saltRounds);
 
 function generateJwtToken(user){
   const {_id,name,email,password,ip}=user
@@ -25,7 +27,8 @@ async function signup(req,res){
         if(user){
            return res.status(400).send({error:'User with emailid already exists'})
         }
-        user=UserModel.create({...req.body})
+        const hash = bcrypt.hashSync(password, salt);
+        user=await UserModel.create({name,gender,email,password:hash})
         return res.send({message:'Registration successfully done'})
     } catch (error) {
         console.log(error)
@@ -40,12 +43,11 @@ async function login(req,res){
         if(!email||!password){
             return res.status(400).send({error:'Email or password not present'})  
         }
-        let user = await UserModel.find({password})
-        
+        let user = await UserModel.findOne({email:{$eq:email}})
         if(!user){
           return res.status(400).send({error:'User with email doesnot exist please register'})
         }
-        if(password!==user.password){
+        if(!bcrypt.compareSync(password, user.password)){
             return res.status(400).send({error:'Incorrect password'})
         }
         const token=generateJwtToken(user)

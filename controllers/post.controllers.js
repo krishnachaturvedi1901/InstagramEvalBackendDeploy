@@ -1,10 +1,10 @@
 const { PostModel } = require("../models/postModel")
 
 async function getPostsByUserID(req,res){
-  const {userId}=req.params
+  const {_id:userId}=req.user
   try {
-    const posts= await PostModel.find({_id:userId})
-    const totalPosts=await PostModel.count({_id:userId})
+    const posts= await PostModel.find({userId})
+    const totalPosts=await PostModel.count({userId})
     return res.status(200).send({data:{totalPosts,posts}})
 
   } catch (error) {
@@ -37,12 +37,20 @@ async function createPost(req,res){
   async function updatePost(req,res){
       const content=req.body
       const {postId}=req.params
+      console.log("postId->",postId,content)
     try {
       let post=await PostModel.find({_id:postId})
-      post={...post,...content}
-      await post.save()
-      post=post.toJSON()
-      return res.status(200).send({post})
+      if(post){
+        for(const[key,value] of Object.entries(content)){
+          post[0][key]=value
+         }
+        post=post[0]
+        await PostModel.updateOne({_id:post._id},{$set:{...post}})
+        post=await PostModel.find({_id:postId})
+        return res.status(200).send({updatedPost:post[0]})
+      }
+      else { return res.send(null)}
+
 
     } catch (error) {
       console.log(error)

@@ -12,7 +12,11 @@ app.use(express.json())
 
 app.use('/users',authRouter)
 app.use('/posts',postRouter)
-
+app.use('*',()=>{
+    resizeBy.send({
+        "/posts":"First login and get your all posts using this route"
+    })
+})
 const port=Number(process.argv[2])||5001
 
 
