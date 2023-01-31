@@ -4,10 +4,9 @@ const PostSchema=new mongoose.Schema({
     title:String,
     body:String,
     device:String,
-    user:{
-        userId:String,
-        name:String
-    }
+    userId:mongoose.Types.ObjectId,
+    name:String
+
 },{
     timestamps:false,
     versionKey:false

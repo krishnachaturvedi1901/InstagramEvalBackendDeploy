@@ -1,10 +1,11 @@
+const { default: mongoose } = require("mongoose")
 const { PostModel } = require("../models/postModel")
 
 async function getPostsByUserID(req,res){
-  const {_id:userId}=req.user
+  let {_id}=req.user
   try {
-    const posts= await PostModel.find({userId})
-    const totalPosts=await PostModel.count({userId})
+    const posts= await PostModel.find({userId:_id})
+    const totalPosts=await PostModel.count({userId:_id})
     return res.status(200).send({data:{totalPosts,posts}})
 
   } catch (error) {
@@ -20,11 +21,8 @@ async function createPost(req,res){
     try {
       const post=await PostModel.create({
         title,body,device,
-        user:{
-          userId:user._id,
-          name:user.name
-        }
-
+        userId:user._id,
+        name:user.name
       })
       return res.status(200).send({data:post})
     } catch (error) {
@@ -37,7 +35,6 @@ async function createPost(req,res){
   async function updatePost(req,res){
       const content=req.body
       const {postId}=req.params
-      console.log("postId->",postId,content)
     try {
       let post=await PostModel.find({_id:postId})
       if(post){
@@ -54,21 +51,27 @@ async function createPost(req,res){
 
     } catch (error) {
       console.log(error)
-      return res.status(500).send({error:'Something wrong with db'})
+      return res.status(500).send({error:'Something wrong with db or postId not exist'})
   
     }
   }
 
   async function deletePost(req,res){
      const {postId}=req.params
+     let post=null
     try {
-      let post =await PostModel.findByIdAndDelete({_id:postId})
-      return res.status(200).send({message:'Post deleted successfully',data:post})
+      post =await PostModel.findByIdAndDelete({_id:postId})
 
     } catch (error) {
       console.log(error)
       return res.status(500).send({error:'Something wrong with db'})
   
+    }
+    if(post){
+      return res.status(200).send({message:'Post deleted successfully',data:post})
+    }
+    else{ 
+      return res.status(400).send({error:'Post with given postId does not exist'})
     }
   }
   
