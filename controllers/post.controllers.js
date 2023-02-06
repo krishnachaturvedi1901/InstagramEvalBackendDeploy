@@ -1,6 +1,21 @@
 const { default: mongoose } = require("mongoose")
 const { PostModel } = require("../models/postModel")
 
+
+async function getAllPosts(req,res){
+  try {
+    const posts= await PostModel.find()
+    const totalPosts=await PostModel.count()
+    return res.status(200).send({data:{totalPosts,posts}})
+
+  } catch (error) {
+    console.log(error)
+    return res.status(500).send({error:'Something wrong with db'})
+
+  }
+}
+
+
 async function getPostsByUserID(req,res){
   let {_id}=req.user
   try {
@@ -75,4 +90,4 @@ async function createPost(req,res){
     }
   }
   
-  module.exports={getPostsByUserID,createPost,updatePost,deletePost}
+  module.exports={getAllPosts,getPostsByUserID,createPost,updatePost,deletePost}
