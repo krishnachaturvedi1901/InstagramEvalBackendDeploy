@@ -15,6 +15,19 @@ async function getAllPosts(req,res){
   }
 }
 
+async function getSinglePostByPostID(req,res){
+  const postId=req.params.postId
+  try {
+    const post= await PostModel.find({_id:postId})
+    return res.status(200).send({data:post})
+
+  } catch (error) {
+    console.log(error)
+    return res.status(500).send({error:'Something wrong with db'})
+
+  }
+
+}
 
 async function getPostsByUserID(req,res){
   let {_id}=req.user
@@ -90,4 +103,4 @@ async function createPost(req,res){
     }
   }
   
-  module.exports={getAllPosts,getPostsByUserID,createPost,updatePost,deletePost}
+  module.exports={getAllPosts,getPostsByUserID,createPost,updatePost,deletePost,getSinglePostByPostID}

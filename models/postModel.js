@@ -5,8 +5,8 @@ const PostSchema=new mongoose.Schema({
     body:String,
     device:String,
     userId:mongoose.Types.ObjectId,
-    name:String
-
+    name:String,
+    userImage:String
 },{
     timestamps:false,
     versionKey:false
