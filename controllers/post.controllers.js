@@ -3,9 +3,12 @@ const { PostModel } = require("../models/postModel")
 
 
 async function getAllPosts(req,res){
+   let {page=1,pageSize=10,search=''}=req.query
+   page=parseInt(page)
+   pageSize=parseInt(pageSize)
   try {
-    const posts= await PostModel.find()
-    const totalPosts=await PostModel.count()
+    const posts= await PostModel.find({title:{$regex : new RegExp(search,'i')}}).limit(pageSize).skip((page-1)*pageSize)
+    const totalPosts=await PostModel.count({title:{$regex : new RegExp(search,'i')}})
     return res.status(200).send({data:{totalPosts,posts}})
 
   } catch (error) {
