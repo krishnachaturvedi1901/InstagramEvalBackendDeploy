@@ -15,7 +15,7 @@ async function getAllPosts(req,res){
   }
 }
 
-async function getSinglePostByPostID(req,res){
+async function getSinglePostByPostId(req,res){
   const postId=req.params.postId
   try {
     const post= await PostModel.find({_id:postId})
@@ -103,4 +103,4 @@ async function createPost(req,res){
     }
   }
   
-  module.exports={getAllPosts,getPostsByUserID,createPost,updatePost,deletePost,getSinglePostByPostID}
+  module.exports={getAllPosts,getPostsByUserID,createPost,updatePost,deletePost,getSinglePostByPostId}
